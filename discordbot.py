@@ -16,8 +16,6 @@ client = commands.Bot(command_prefix='*', intents=intents)
 #PREFIX = os.environ['PREFIX']
 TOKEN = os.environ['TOKEN']
 
-client = discord.Client()
-
 openai.api_key = OPENAI
 
 @client.event
