@@ -15,7 +15,7 @@ client = commands.Bot(command_prefix='*')
 #PREFIX = os.environ['PREFIX']
 TOKEN = os.environ['TOKEN']
 
-openai.api_key = OPENAI
+openai.api_key = "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"
 
 @client.event
 async def on_ready():
@@ -41,4 +41,4 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
     	await ctx.send("명령어를 찾지 못했습니다")
 
-client.run(TOKEN)
+client.run("MTA4NTQwNTU4NTI2NjIwMDYzNw.G_R0BJ.VfPqMTAAJWMIQLbQwS8iebRMupgmxgO0N95FYQ")
