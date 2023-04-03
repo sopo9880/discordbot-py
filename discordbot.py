@@ -1,13 +1,28 @@
 import discord
 import openai
 from discord.ext import commands
+from cmath import log
+from distutils.sysconfig import PREFIX
+import discord
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 intents = discord.Intents.all()
 intents.message_content = True
 
 client = commands.Bot(command_prefix='*', intents=intents)
 
+#PREFIX = os.environ['PREFIX']
+TOKEN = os.environ['TOKEN']
+
+client = discord.Client()
+
 openai.api_key = OPENAI
+
+@client.event
+async def on_ready():
+    print(f'Logged in as {client.user}.')
 
 @client.event
 async def on_ready():
@@ -30,8 +45,3 @@ async def on_command_error(ctx, error):
     	await ctx.send("명령어를 찾지 못했습니다")
 
 client.run(TOKEN)
-
-
-'''
-        {"role": "system", "content": "한문장으로 부탁합니다."},
-        '''
