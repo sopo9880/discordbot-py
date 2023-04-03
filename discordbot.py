@@ -9,9 +9,8 @@ import os
 load_dotenv()
 
 intents = discord.Intents.all()
-intents.message_content = True
 
-client = commands.Bot(command_prefix='*', intents=intents)
+client = commands.Bot(command_prefix='*')
 
 #PREFIX = os.environ['PREFIX']
 TOKEN = os.environ['TOKEN']
