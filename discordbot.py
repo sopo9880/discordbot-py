@@ -1,32 +1,37 @@
-from cmath import log
-from distutils.sysconfig import PREFIX
 import discord
-from dotenv import load_dotenv
-import os
-load_dotenv()
+import openai
+from discord.ext import commands
 
-PREFIX = os.environ['PREFIX']
-TOKEN = os.environ['TOKEN']
+intents = discord.Intents.all()
+intents.message_content = True
 
-client = discord.Client()
+client = commands.Bot(command_prefix='*', intents=intents)
+
+openai.api_key = "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"
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user}.')
+    print('Bot is ready.')
+
+@client.command(name='질문')
+async def ask_gpt(ctx, *, question):
+    result = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+        {"role": "user", "content": question}
+        ]
+    )
+    answer = result['choices'][0]['message']['content']
+    await ctx.send(answer)
 
 @client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+    	await ctx.send("명령어를 찾지 못했습니다")
 
-    if message.content == f'{PREFIX}call':
-        await message.channel.send("callback!")
-
-    if message.content.startswith(f'{PREFIX}hello'):
-        await message.channel.send('Hello!')
+client.run("MTA4NTQwNTU4NTI2NjIwMDYzNw.G_R0BJ.VfPqMTAAJWMIQLbQwS8iebRMupgmxgO0N95FYQ")
 
 
-try:
-    client.run(TOKEN)
-except discord.errors.LoginFailure as e:
-    print("Improper token has been passed.")
+'''
+        {"role": "system", "content": "한문장으로 부탁합니다."},
+        '''
