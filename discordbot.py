@@ -45,7 +45,7 @@ async def typing_test(ctx):
     word_list = ["사과", "바나나", "딸기", "포도", "수박", "메론", "오렌지", "참외", "키위", "배"]
     random.shuffle(word_list)
 
-    await ctx.send('타자 연습을 시작합니다. 준비되면 엔터를 눌러주세요.')
+    await ctx.send('타자 연습을 시작합니다. 준비되면 아무키나 입력하여 보내주세요.')
     await client.wait_for('message', check=check)
 
     start_time = time.time()
