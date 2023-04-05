@@ -42,8 +42,8 @@ async def typing_test(ctx):
         return msg.author == ctx.author and msg.channel == ctx.channel
 
     # 랜덤 단어 리스트 생성
-    word_list = ["사과", "바나나", "딸기", "포도", "수박", "메론", "오렌지", "참외", "키위", "배"]
-    random.shuffle(word_list)
+    word_list = ["사과", "바나나", "딸기", "오렌지", "수박", "파인애플", "포도", "배", "귤", "참외", "메론", "레몬", "라임", "자두", "복숭아", "애플망고", "망고스틴", "패션푸룻", "청포도", "고수"]
+    selected_words = random.sample(word_list, 10)
 
     await ctx.send('타자 연습을 시작합니다. 준비되면 아무키나 입력하여 보내주세요.')
     await client.wait_for('message', check=check)
@@ -51,7 +51,7 @@ async def typing_test(ctx):
     start_time = time.time()
 
     correct = 0
-    for i, word in enumerate(word_list):
+    for i, word in enumerate(selected_words):
         await ctx.send(f'[{i+1}/10] {word}')
 
         try:
