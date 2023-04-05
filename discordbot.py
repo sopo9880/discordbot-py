@@ -1,21 +1,19 @@
-import discord
-import openai
+import discord, openai, os, time, random, asyncio
 from discord.ext import commands
 from cmath import log
 from distutils.sysconfig import PREFIX
-import discord
 from dotenv import load_dotenv
-import os
+
 load_dotenv()
-
 intents = discord.Intents.all()
-
 client = commands.Bot(command_prefix='*')
 
 #PREFIX = os.environ['PREFIX']
 TOKEN = os.environ['TOKEN']
 
 openai.api_key = "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"
+
+#=============================================================
 
 @client.event
 async def on_ready():
@@ -25,6 +23,7 @@ async def on_ready():
 async def on_ready():
     print('Bot is ready.')
 
+#==============================================================
 @client.command(name='질문')
 async def ask_gpt(ctx, *, question):
     result = openai.ChatCompletion.create(
@@ -35,6 +34,62 @@ async def ask_gpt(ctx, *, question):
     )
     answer = result['choices'][0]['message']['content']
     await ctx.send(answer)
+#=============================================================
+
+@client.command(name='타자연습', aliases=['타자', '연습'])
+async def typing_test(ctx):
+    def check(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel
+
+    # 랜덤 단어 리스트 생성
+    word_list = ["사과", "바나나", "딸기", "포도", "수박", "메론", "오렌지", "참외", "키위", "배"]
+    random.shuffle(word_list)
+
+    await ctx.send('타자 연습을 시작합니다. 준비되면 엔터를 눌러주세요.')
+    await client.wait_for('message', check=check)
+
+    start_time = time.time()
+
+    correct = 0
+    for i, word in enumerate(word_list):
+        await ctx.send(f'[{i+1}/10] {word}')
+
+        try:
+            msg = await client.wait_for('message', check=check, timeout=10.0)
+        except:
+            await ctx.send('시간이 초과되었습니다!')
+            return
+
+        if msg.content == word:
+            correct += 1
+
+    end_time = time.time()
+
+    duration = round(end_time - start_time, 2)
+    accuracy = round(correct / 10 * 100, 2)
+    await ctx.send(f'타자 연습이 끝났습니다! 소요시간: {duration}초, 정확도: {accuracy}%')
+
+#=============================================================
+@client.command()
+async def 주사위(ctx):
+    randnum = random.randint(1, 6)  # 1이상 6이하 랜덤 숫자를 뽑음
+    await ctx.send(f'주사위 결과는 {randnum} 입니다.')
+
+#=============================================================
+
+@client.command()
+async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다음에 나오는 메시지를 받아줌
+    rps_table = ['가위', '바위', '보']
+    bot = random.choice(rps_table)
+    result = rps_table.index(user) - rps_table.index(bot)  # 인덱스 비교로 결과 결정
+    if result == 0:
+        await ctx.send(f'{user} vs {bot}  비겼습니다.')
+    elif result == 1 or result == -2:
+        await ctx.send(f'{user} vs {bot}  유저가 이겼습니다.')
+    else:
+        await ctx.send(f'{user} vs {bot}  봇이 이겼습니다.')
+
+#=============================================================
 
 @client.event
 async def on_command_error(ctx, error):
