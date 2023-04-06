@@ -1,9 +1,12 @@
-import discord, openai, os, time, random, asyncio, requests
-from bs4 import BeautifulSoup
+import discord, openai, os, time, random, asyncio
 from discord.ext import commands
+from cmath import log
+from distutils.sysconfig import PREFIX
+from dotenv import load_dotenv
 
+load_dotenv()
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix='*', intents=intents)
+client = commands.Bot(command_prefix='*')
 
 openai.api_key = "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"
 
@@ -18,7 +21,7 @@ async def on_ready():
     print('Bot is ready.')
 
 #==============================================================
-@client.command(name='질문')
+@client.command(name='질문', aliases=['선생님'], help='Open AI 의 답변을 가져옵니다.')
 async def ask_gpt(ctx, *, question):
     result = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -30,7 +33,7 @@ async def ask_gpt(ctx, *, question):
     await ctx.send(answer)
 #=============================================================
 
-@client.command(name='타자연습', aliases=['타자', '연습'])
+@client.command(name='타자연습', aliases=['타자', '연습'], help='타자를 연습할 수 있습니다.')
 async def typing_test(ctx):
     def check(msg):
         return msg.author == ctx.author and msg.channel == ctx.channel
@@ -64,14 +67,15 @@ async def typing_test(ctx):
     await ctx.send(f'타자 연습이 끝났습니다! 소요시간: {duration}초, 정확도: {accuracy}%')
 
 #=============================================================
-@client.command()
-async def 주사위(ctx):
-    randnum = random.randint(1, 6)  # 1이상 6이하 랜덤 숫자를 뽑음
-    await ctx.send(f'주사위 결과는 {randnum} 입니다.')
+@client.command(name='주사위굴리기', aliases=['주사위'], help='1에서 원하는 숫자까지 랜덤한 수를 굴립니다.')
+async def 주사위(ctx, str):
+    num = str
+    randnum = random.randint(1, num)  # 1이상 랜덤 숫자를 뽑음
+    await ctx.send(f'결과는 {randnum} 입니다.')
 
 #=============================================================
 
-@client.command()
+@client.command(name="가위바위보", aliases=['rsp'], help='봇과 가위바위보 한판!')
 async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다음에 나오는 메시지를 받아줌
     rps_table = ['가위', '바위', '보']
     bot = random.choice(rps_table)
@@ -85,37 +89,46 @@ async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다�
 
 #=============================================================
 
-@client.command()
-async def 반속(ctx):
-    await ctx.send("랜덤한 시간 뒤에 문자가 오면 아무말이나 입력해주세요!")
-    await asyncio.sleep(random.randint(3, 5))
-    t1 = time.perf_counter()
-    await ctx.send("지금!")
-    t2 = time.perf_counter()
+@client.command(name="반응속도", aliases=['반속'], help='반응속도를 테스트 할 수 있습니다.')
+async def 반속(ctx, delay: float):
+    await ctx.send("랜덤한 시간 뒤에 문자가 나오면 아무 말이나 보내주세요!")
+    random_delay = random.randint(3000, 6000) / 1000 # ms를 s 단위로 변환
+    time.sleep(random_delay)
 
     start_time = time.time()
+    await ctx.send("지금입니다!")
+
+    def check(message):
+        return message.author == ctx.author and message.channel == ctx.channel
+
     try:
-        await client.wait_for('message', timeout=5.0)
-    except:
-        await ctx.send('아무말이나 입력하셨어야죠.. 시간이 초과되었습니다!')
-        return
-    
-    end_time = time.time()
-
-    #디스코드 전체 지연시간
-    latency = round(client.latency)
-    duration1 = round(t2 - t1)
-    total_latency = latency + duration1
-    
-    #반응한 시간
-    duration2 = round(end_time - start_time, 2)
-
-    #결과
-    result = ((duration2 - total_latency) * 1000) - 300
-
-    await ctx.send(f'당신의 반응속도는: {result}ms')
+        message = await client.wait_for('message', timeout=10.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("시간 내에 반응하지 않았습니다.")
+    else:
+        end_time = time.time()
+        response_time = (end_time - start_time - client.latency - delay) * 1000 # 디스코드 자체 지연시간과 사용자 지연시간을 모두 고려합니다.
+        await ctx.send(f"{ctx.author.mention}의 반응속도는 {response_time:.2f}ms 입니다.")
 
 #=============================================================
+
+@client.command(name="사용자지연시간", aliases=['userdelay', 'ud'], help='사용자 개인의 지연시간을 측정합니다. 반응속도 테스트에 사용해주세요')
+async def 사용자지연시간(ctx):
+    await ctx.send("아무 말이나 두 번 입력해주세요.")
+
+    def check(message):
+        return message.author == ctx.author and message.channel == ctx.channel
+
+    messages = []
+    try:
+        for i in range(2):
+            message = await client.wait_for('message', timeout=10.0, check=check)
+            messages.append(message)
+    except asyncio.TimeoutError:
+        await ctx.send("시간 내에 반응하지 않았습니다.")
+    else:
+        response_time = (messages[1].created_at - messages[0].created_at).total_seconds() * 1000
+        await ctx.send(f"{ctx.author.mention}의 지연시간은 {response_time:.2f}ms 입니다.")
 
 #=============================================================
 
