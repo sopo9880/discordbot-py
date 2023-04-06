@@ -90,6 +90,26 @@ async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다�
         await ctx.send(f'{user} vs {bot}  봇이 이겼습니다.')
 
 #=============================================================
+@client.command()
+async def 반응속도(ctx):
+    await ctx.send("랜덤한 시간 뒤에 문자가 오면 아무말이나 입력해주세요!")
+    await asyncio.sleep(random.randint(0, 5))
+    await ctx.send("지금!")
+
+    start_time = time.time()
+    try:
+        await client.wait_for('message', timeout=10.0)
+    except:
+        await ctx.send('아무말이나 입력하셨어야죠.. 시간이 초과되었습니다!')
+        return
+
+    end_time = time.time()
+
+    duration = round(end_time - start_time, 2)
+    result = duration - round(client.latency)
+
+    await ctx.send(f'당신의 반응속도는: {result * 1000}ms')
+#=============================================================
 
 @client.event
 async def on_command_error(ctx, error):
