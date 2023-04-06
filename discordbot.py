@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from discord.ext import commands
 
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix='!', intents=intents)
+client = commands.Bot(command_prefix='*', intents=intents)
 
 openai.api_key = "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"
 
