@@ -92,6 +92,7 @@ async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다�
 @client.command(name="반응속도", aliases=['반속'], help='반응속도를 테스트 할 수 있습니다.')
 async def 반속(ctx, delay: float):
     await ctx.send("랜덤한 시간 뒤에 문자가 나오면 아무 말이나 보내주세요!")
+    user_delay = delay / 1000
     random_delay = random.randint(3000, 6000) / 1000 # ms를 s 단위로 변환
     time.sleep(random_delay)
 
@@ -107,7 +108,7 @@ async def 반속(ctx, delay: float):
         await ctx.send("시간 내에 반응하지 않았습니다.")
     else:
         end_time = time.time()
-        response_time = (end_time - start_time - client.latency - delay) * 1000 # 디스코드 자체 지연시간과 사용자 지연시간을 모두 고려합니다.
+        response_time = (end_time - start_time - client.latency - user_delay) * 1000 # 디스코드 자체 지연시간과 사용자 지연시간을 모두 고려합니다.
         await ctx.send(f"{ctx.author.mention}의 반응속도는 {response_time:.2f}ms 입니다.")
 
 #=============================================================
