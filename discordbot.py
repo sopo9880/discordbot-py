@@ -1,15 +1,9 @@
-import discord, openai, os, time, random, asyncio
+import discord, openai, os, time, random, asyncio, requests
+from bs4 import BeautifulSoup
 from discord.ext import commands
-from cmath import log
-from distutils.sysconfig import PREFIX
-from dotenv import load_dotenv
 
-load_dotenv()
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix='*')
-
-#PREFIX = os.environ['PREFIX']
-TOKEN = os.environ['TOKEN']
+client = commands.Bot(command_prefix='!', intents=intents)
 
 openai.api_key = "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"
 
@@ -90,30 +84,42 @@ async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다�
         await ctx.send(f'{user} vs {bot}  봇이 이겼습니다.')
 
 #=============================================================
+
 @client.command()
-async def 반응속도(ctx):
+async def 반속(ctx):
     await ctx.send("랜덤한 시간 뒤에 문자가 오면 아무말이나 입력해주세요!")
-    await asyncio.sleep(random.randint(0, 5))
+    await asyncio.sleep(random.randint(3, 5))
+    t1 = time.perf_counter()
     await ctx.send("지금!")
+    t2 = time.perf_counter()
 
     start_time = time.time()
     try:
-        await client.wait_for('message', timeout=10.0)
+        await client.wait_for('message', timeout=5.0)
     except:
         await ctx.send('아무말이나 입력하셨어야죠.. 시간이 초과되었습니다!')
         return
-
+    
     end_time = time.time()
 
-    duration = round(end_time - start_time, 2)
-    result = duration - round(client.latency)
+    #디스코드 전체 지연시간
+    latency = round(client.latency)
+    duration1 = round(t2 - t1)
+    total_latency = latency + duration1
+    
+    #반응한 시간
+    duration2 = round(end_time - start_time, 2)
 
-    await ctx.send(f'당신의 반응속도는: {result * 1000}ms')
+    #결과
+    result = ((duration2 - total_latency) * 1000) - 300
+
+    await ctx.send(f'당신의 반응속도는: {result}ms')
+
+#=============================================================
+
 #=============================================================
 
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
     	await ctx.send("명령어를 찾지 못했습니다")
-
-client.run("MTA4NTQwNTU4NTI2NjIwMDYzNw.G_R0BJ.VfPqMTAAJWMIQLbQwS8iebRMupgmxgO0N95FYQ")
