@@ -275,7 +275,7 @@ def get_match_data(match_id):
     return response.json()
 
 #!롤전적 명령어 구현
-@bot.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [갯수] ')
+@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [갯수] ')
 async def 롤전적(ctx, summoner_name, num):
     try:
         num = int(num)
