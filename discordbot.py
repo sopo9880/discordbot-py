@@ -9,7 +9,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix='*')
 
 openai.api_key = "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"
-api_key = "RGAPI-1006a570-b7f3-4446-b7c4-868ede3c2fd5"
+riot_api_key = "RGAPI-1006a570-b7f3-4446-b7c4-868ede3c2fd5"
 
 #=============================================================
 
@@ -270,7 +270,7 @@ def get_team_kills(match_id, team_id):
 
 #매치결과 반환
 def get_match_data(match_id):
-    url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}'
+    url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={riot_api_key}'
     response = requests.get(url)
     return response.json()
 
@@ -288,7 +288,7 @@ async def 롤전적(ctx, summoner_name, num):
         await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
         return
     
-    url = f'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={num}&api_key={api_key}'
+    url = f'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={num}&api_key={riot_api_key}'
     response = requests.get(url)
     if response.status_code == 200:
         match_ids = response.json()
