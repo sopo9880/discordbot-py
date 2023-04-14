@@ -1,4 +1,4 @@
-import discord, openai, os, time, random, asyncio, requests
+import discord, openai, os, time, random, asyncio, requests, datetime
 from discord.ext import commands
 from cmath import log
 from distutils.sysconfig import PREFIX
@@ -298,7 +298,7 @@ async def 롤전적(ctx, summoner_name, num):
 
     
     for idx, match_id in enumerate(match_ids):
-        url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={api_key}'
+        url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={riot_api_key}'
         response = requests.get(url)
 
         if response.status_code == 200:
