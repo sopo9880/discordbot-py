@@ -143,7 +143,7 @@ def get_champion_name(champion_id):
 
 # 소환사명으로부터 puuid를 가져오는 함수
 def get_puuid(summoner_name):
-    url = f'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}?api_key={api_key}'
+    url = f'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}?api_key={riot_api_key}'
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -175,7 +175,7 @@ def get_game_mode(queue_id: int) -> str:
 
 #게임 스펠 한국어
 def get_spell_name(summoner_spell_id):
-    url = f'https://kr.api.riotgames.com/lol/static-data/v4/summoner-spells/{summoner_spell_id}?locale=ko_KR&api_key={api_key}'
+    url = f'https://kr.api.riotgames.com/lol/static-data/v4/summoner-spells/{summoner_spell_id}?locale=ko_KR&api_key={riot_api_key}'
     response = requests.get(url)
 
     if response.status_code == 200:
@@ -200,7 +200,7 @@ def get_rune_name(rune_id):
     # 룬 정보를 담을 딕셔너리를 생성합니다.
     RUNE_DICT = {}
 
-    RUNE_URL = f"https://kr.api.riotgames.com/lol/static-data/v4/runes?locale=ko_KR&api_key={api_key}"
+    RUNE_URL = f"https://kr.api.riotgames.com/lol/static-data/v4/runes?locale=ko_KR&api_key={riot_api_key}"
     rune_data = requests.get(RUNE_URL).json()
 
     for rune_id in rune_data["data"].keys():
