@@ -9,7 +9,7 @@ intents = discord.Intents.all()
 client = commands.Bot(command_prefix='*')
 
 openai.api_key = "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"
-api_key = RIOT_API
+api_key = "RGAPI-1006a570-b7f3-4446-b7c4-868ede3c2fd5"
 
 #=============================================================
 
