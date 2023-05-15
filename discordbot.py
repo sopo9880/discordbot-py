@@ -26,7 +26,7 @@ async def on_ready():
 
 @client.command(name='안녕', aliases=['안녕하세요', 'ㅎㅇ', '하이'], help='인사해봅시다!')
 async def hello(ctx):
-    await ctx.send(f"{ctx.author}|{ctx.author.mention}, 안녕하세요!")
+    await ctx.send(f"{ctx.author} | {ctx.author.mention}, 안녕하세요!")
 
 #==============================================================
 @client.command(name='질문', aliases=['선생님'], help='Open AI 의 답변을 가져옵니다.')
@@ -39,7 +39,7 @@ async def ask_gpt(ctx, *, question):
         ]
     )
     answer = result['choices'][0]['message']['content']
-    await ctx.send(f"{ctx.author.mention}님, 제가 생각하는 답변은 다음과 같습니다.\n", answer)
+    await ctx.send(f"{ctx.author.mention}님, 제가 생각하는 답변은 다음과 같습니다.\n {answer}")
 #=============================================================
 
 @client.command(name='타자연습', aliases=['타자', '연습'], help='타자를 연습할 수 있습니다.')
