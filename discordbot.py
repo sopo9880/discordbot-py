@@ -31,6 +31,7 @@ async def ask_gpt(ctx, *, question):
         ]
     )
     answer = result['choices'][0]['message']['content']
+    await ctx.send("답답하다고 느껴지시면\n https://chat.openai.com/ \n이 사이트를 방문하시길 바랍니다.")
     await ctx.send(answer)
 #=============================================================
 
