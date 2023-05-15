@@ -31,7 +31,7 @@ async def hello(ctx):
 #==============================================================
 @client.command(name='질문', aliases=['선생님'], help='Open AI 의 답변을 가져옵니다.')
 async def ask_gpt(ctx, *, question):
-    await ctx.send("만약, 답답하다고 느껴지시면\n https://chat.openai.com/ \n이 사이트를 방문하시길 바랍니다.")
+    await ctx.send("만약, 답답하다고 느껴지시면\n https://chat.openai.com/ \n이 사이트를 방문하시길 바랍니다. \n답변을 작성중이니 조금 기다려주시길 바랍니다.")
     result = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
