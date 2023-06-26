@@ -31,7 +31,7 @@ async def hello(ctx):
 #==============================================================
 @client.command(name='질문', aliases=['선생님'], help='Open AI 의 답변을 가져옵니다.')
 async def ask_gpt(ctx, *, question):
-    message =  await ctx.send("만약, 답답하다고 느껴지시면\n https://chat.openai.com/ \n이 사이트를 방문하시길 바랍니다. \n답변을 작성중이니 조금 기다려주시길 바랍니다.")
+    """message =  await ctx.send("만약, 답답하다고 느껴지시면\n https://chat.openai.com/ \n이 사이트를 방문하시길 바랍니다. \n답변을 작성중이니 조금 기다려주시길 바랍니다.")
     # 메시지 ID를 변수에 저장
     message_id = message.id
     result = openai.ChatCompletion.create(
@@ -39,9 +39,9 @@ async def ask_gpt(ctx, *, question):
         messages=[
         {"role": "user", "content": question}
         ]
-    )
+    )"""
     answer = result['choices'][0]['message']['content']
-    await ctx.channel.fetch_message(message_id).delete()
+    #await ctx.channel.fetch_message(message_id).delete()
     await ctx.send(f"{ctx.author.mention}님, 제가 생각하는 답변은 다음과 같습니다.\n {answer}")
 #=============================================================
 
