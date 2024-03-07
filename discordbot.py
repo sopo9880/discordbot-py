@@ -298,7 +298,9 @@ async def 롤전적(ctx, player_info_num):
 
     # 공백으로 나눠서 플레이어 태그와 반복 횟수 추출
     player_tag, num = player_tag_num.split()
-   
+    
+    await ctx.send(player_name, player_tag)
+    
     puuid = get_puuid(player_name, player_tag)
 
     await ctx.send(puuid)
