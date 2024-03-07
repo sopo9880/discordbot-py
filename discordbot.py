@@ -153,8 +153,9 @@ def get_champion_name(champion_id):
     return champion_name
 
 # 소환사명으로부터 puuid를 가져오는 함수
-def get_puuid(summoner_name):
-    url = f'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}?api_key={riot_api_key}'
+def get_puuid(summoner_name, summoner_tag):
+    #url = f'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}?api_key={riot_api_key}' 옛 버전
+    url = f'https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{summoner_name}/{summoner_tag}?api_key={riot_api_key}'
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -286,15 +287,15 @@ def get_match_data(match_id):
     return response.json()
 
 #!롤전적 명령어 구현
-@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [갯수] ')
-async def 롤전적(ctx, summoner_name, num):
+@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
+async def 롤전적(ctx, summoner_name, summoner_tag, num):
     try:
         num = int(num)
     except ValueError:
         await ctx.send("전적의 개수는 숫자로 입력해주세요!")
         return
     
-    puuid = get_puuid(summoner_name)
+    puuid = get_puuid(summoner_name, summoner_tag)
     if not puuid:
         await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
         return
