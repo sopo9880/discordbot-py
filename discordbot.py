@@ -289,32 +289,16 @@ def get_match_data(match_id):
 #!롤전적 명령어 구현
 @client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
 async def 롤전적(ctx, player_info_num):
-    await ctx.send(player_info_num)
-    try:
-        # 입력된 문자열을 공백을 기준으로 분리
-        parts = player_info_num.split()
-        
-        # 첫 번째 부분은 플레이어 정보
-        player_info = parts[0]
+    # 사용자 입력을 공백을 기준으로 분리
+    input_parts = " ".join(args).split()
 
-        # 나머지 부분은 반복 횟수
-        num = int(parts[-1])
+    # 플레이어 이름과 태그 추출
+    player_name_tag = input_parts[0].split("#")
+    player_name = " ".join(player_name_tag[:-1])  # 빈칸으로 구분된 플레이어 이름
+    player_tag = player_name_tag[-1]  # 태그
 
-        # 만약 플레이어 정보에 #이 포함되어 있다면
-        if '#' in player_info:
-            player_name, player_tag = player_info.split("#")
-
-            # 공백을 포함한 플레이어 이름을 재구성
-            for part in parts[1:]:
-                player_name += ' ' + part
-        else:
-            # #이 포함되어 있지 않다면 전체가 플레이어 이름
-            player_name = player_info
-            player_tag_num = parts[1]
-
-    except ValueError:
-        await ctx.send("전적의 개수는 숫자로 입력해주세요!")
-        return
+    # 반복 횟수 추출
+    num = int(input_parts[-1])
    
     puuid = get_puuid(player_name, player_tag)
     if not puuid:
