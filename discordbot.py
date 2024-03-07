@@ -288,14 +288,15 @@ def get_match_data(match_id):
 
 #!롤전적 명령어 구현
 @client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
-async def 롤전적(ctx, summoner_name, summoner_tag, num):
+async def 롤전적(ctx, player_info, num):
     try:
         num = int(num)
     except ValueError:
         await ctx.send("전적의 개수는 숫자로 입력해주세요!")
         return
+    player_name, player_tag = player_info.split("#")
     
-    puuid = get_puuid(summoner_name, summoner_tag)
+    puuid = get_puuid(player_name, player_tag)
     if not puuid:
         await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
         return
