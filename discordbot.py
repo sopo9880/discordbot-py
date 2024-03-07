@@ -289,7 +289,7 @@ def get_match_data(match_id):
 #!롤전적 명령어 구현
 @client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
 async def 롤전적(ctx, player_info_num):
-    await ctx.send("player_info_num")
+    await ctx.send(player_info_num)
     try:
         # 입력된 문자열을 공백을 기준으로 분리
         parts = player_info_num.split()
