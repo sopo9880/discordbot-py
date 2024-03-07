@@ -388,7 +388,7 @@ async def 롤전적(ctx, player_info_num):
                                 f" \t\t\t 킬관여 {kill_involvement:,.1f}% CS{cs} ({cs_str})\n"
                                 f"더블킬:{double_kill} 트리플킬: {triple_kill} 쿼드라킬: {quadra_kill}, 펜타킬: {penta_kill}")
                     
-                    embed = discord.Embed(title=f"{summoner_name}님의 최근 {num}판 전적", color=random.randint(0, 0xffffff))
+                    embed = discord.Embed(title=f"{player_name}#{player_tag}님의 최근 {num}판 전적", color=random.randint(0, 0xffffff))
                     embed.add_field(name=f"**Match {idx+1}**", value=match_info, inline=False)
                     embed.set_thumbnail(url=champ_image_url)
                     await ctx.send(embed=embed)
