@@ -24,12 +24,12 @@ async def on_ready():
     
 #==============================================================
 
-@client.command(name='안녕', aliases=['안녕하세요', 'ㅎㅇ', '하이'], help='인사해봅시다!')
+@client.command(name='안녕', aliases=['안녕하세요', 'ㅎㅇ', '하이'], help='인사해봅시다!')#24.03.07 이상 없음
 async def hello(ctx):
     await ctx.send(f"{ctx.author} | {ctx.author.mention}, 안녕하세요!")
 
 #==============================================================
-@client.command(name='질문', aliases=['선생님'], help='Open AI 의 답변을 가져옵니다.')
+@client.command(name='질문', aliases=['선생님'], help='Open AI 의 답변을 가져옵니다.')#23.08.03부 서비스 종료
 async def ask_gpt(ctx, *, question):
     #message =  await ctx.send("만약, 답답하다고 느껴지시면\n https://chat.openai.com/ \n이 사이트를 방문하시길 바랍니다. \n답변을 작성중이니 조금 기다려주시길 바랍니다.")
     # 메시지 ID를 변수에 저장
@@ -42,10 +42,12 @@ async def ask_gpt(ctx, *, question):
     )
     answer = result['choices'][0]['message']['content']
     #await ctx.channel.fetch_message(message_id).delete()
-    await ctx.send(f"{ctx.author.mention}님, 제가 생각하는 답변은 다음과 같습니다.\n {answer}")
+	
+	await ctx.send("23.08.03부 서비스 종료했습니다.")
+    #await ctx.send(f"{ctx.author.mention}님, 제가 생각하는 답변은 다음과 같습니다.\n {answer}")
 #=============================================================
 
-@client.command(name='타자연습', aliases=['타자', '연습'], help='타자를 연습할 수 있습니다.')
+@client.command(name='타자연습', aliases=['타자', '연습'], help='타자를 연습할 수 있습니다.')#24.03.07 이상 없음
 async def typing_test(ctx):
     def check(msg):
         return msg.author == ctx.author and msg.channel == ctx.channel
@@ -79,15 +81,15 @@ async def typing_test(ctx):
     await ctx.send(f'타자 연습이 끝났습니다! 소요시간: {duration}초, 정확도: {accuracy}%')
 
 #=============================================================
-@client.command(name='주사위굴리기', aliases=['주사위'], help='1에서 원하는 숫자까지 랜덤한 수를 굴립니다.')
+@client.command(name='주사위굴리기', aliases=['주사위'], help='1에서 원하는 숫자까지 랜덤한 수를 굴립니다.')#불량
 async def 주사위(ctx, str):
-    num = str
+    num = int(str)
     randnum = random.randint(1, num)  # 1이상 랜덤 숫자를 뽑음
     await ctx.send(f'결과는 {randnum} 입니다.')
 
 #=============================================================
 
-@client.command(name="가위바위보", aliases=['rsp'], help='봇과 가위바위보 한판!')
+@client.command(name="가위바위보", aliases=['rsp'], help='봇과 가위바위보 한판!')#24.03.07 이상 없음
 async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다음에 나오는 메시지를 받아줌
     rps_table = ['가위', '바위', '보']
     bot = random.choice(rps_table)
@@ -101,7 +103,7 @@ async def 가위바위보(ctx, user: str):  # user:str로 !가위바위보 다�
 
 #=============================================================
 
-@client.command(name="반응속도", aliases=['반속'], help='반응속도를 테스트 할 수 있습니다.')
+@client.command(name="반응속도", aliases=['반속'], help='반응속도를 테스트 할 수 있습니다.')#24.03.07 이상 없음
 async def 반속(ctx, delay: float):
     await ctx.send("랜덤한 시간 뒤에 문자가 나오면 아무 말이나 보내주세요!")
     user_delay = delay / 1000
@@ -125,7 +127,7 @@ async def 반속(ctx, delay: float):
 
 #=============================================================
 
-@client.command(name="사용자지연시간", aliases=['userdelay', 'ud'], help='사용자 개인의 지연시간을 측정합니다. 반응속도 테스트에 사용해주세요')
+@client.command(name="사용자지연시간", aliases=['userdelay', 'ud'], help='사용자 개인의 지연시간을 측정합니다. 반응속도 테스트에 사용해주세요')#24.03.07 이상 없음
 async def 사용자지연시간(ctx):
     await ctx.send("아무 말이나 두 번 입력해주세요.")
 
@@ -146,7 +148,7 @@ async def 사용자지연시간(ctx):
 #=============================================================
 
 #!롤전적 명령어 구현
-@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
+@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')#불량
 async def 롤전적(ctx, player_info_num):
 
     #사용자 입력을 합침
@@ -259,7 +261,8 @@ async def 롤전적(ctx, player_info_num):
 
 #-------------롤 전적 관련 함수 모음
 
-#챔피언 이름 들고오는 함수
+#챔피언 이름 들고오는 함수 
+#24.03.07 이상 없음
 def get_champion_name(champion_id):
     response = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_version()}/data/ko_KR/champion.json")
     response_json = response.json()
@@ -269,7 +272,7 @@ def get_champion_name(champion_id):
 # 소환사명으로부터 puuid를 가져오는 함수
 def get_puuid(summoner_name, summoner_tag):
     #url = f'https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}?api_key={riot_api_key}' 옛 버전
-    url = f'https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{summoner_name}/{summoner_tag}?api_key={riot_api_key}'
+    url = f'https://asia.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{summoner_name}/{summoner_tag}?api_key={riot_api_key}' #24.03.07 이상 없음
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -361,6 +364,7 @@ def get_time_ago_str(delta):
         return f"{int(delta_min//1440)}일 전"
 
 # 이미지 다운로드 함수
+#24.03.07 이상 없음
 def download_image(url, filename):
     with open(filename, 'wb') as handle:
         response = requests.get(url, stream=True)
@@ -378,6 +382,7 @@ def download_image(url, filename):
 
 
 #전적에서 사용된 챔피언 이미지 URL을 받아오는 함수
+#24.03.07 이상 없음
 def get_champion_image_url(champion_name):
     version = get_version()
     response = requests.get(f'https://ddragon.leagueoflegends.com/cdn/{version}/data/ko_KR/champion.json')
@@ -398,12 +403,14 @@ def get_team_kills(match_id, team_id):
     return team_kills
 
 #매치결과 반환
+#24.03.07 이상 없음
 def get_match_data(match_id):
     url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={riot_api_key}'
     response = requests.get(url)
     return response.json()
 
 #버전 정보 
+#24.03.07 이상 없음
 def get_version():
     response = requests.get("https://ddragon.leagueoflegends.com/api/versions.json")
     if response.status_code == 200:
