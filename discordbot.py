@@ -366,13 +366,16 @@ def download_image(url, filename):
         response = requests.get(url, stream=True)
 
         if not response.ok:
-            print(response)
+            print(f"Error: {response.status_code} - {response.text}")
+            # 또는
+            # response.raise_for_status()  # 이 줄을 추가하면 HTTP 오류가 발생하면 예외가 발생합니다.
 
         for block in response.iter_content(1024):
             if not block:
                 break
 
             handle.write(block)
+
 
 #전적에서 사용된 챔피언 이미지 URL을 받아오는 함수
 def get_champion_image_url(champion_name):
