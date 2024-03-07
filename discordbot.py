@@ -290,14 +290,31 @@ def get_match_data(match_id):
 @client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
 async def 롤전적(ctx, player_info_num):
     try:
-        num = int(num)
+        # 입력된 문자열을 공백을 기준으로 분리
+        parts = player_info_num.split()
+        
+        # 첫 번째 부분은 플레이어 정보
+        player_info = parts[0]
+
+        # 나머지 부분은 반복 횟수
+        num = int(parts[-1])
+
+        # 만약 플레이어 정보에 #이 포함되어 있다면
+        if '#' in player_info:
+            player_name, player_tag = player_info.split("#")
+
+            # 공백을 포함한 플레이어 이름을 재구성
+            for part in parts[1:]:
+                player_name += ' ' + part
+        else:
+            # #이 포함되어 있지 않다면 전체가 플레이어 이름
+            player_name = player_info
+            player_tag_num = parts[1]
+
     except ValueError:
         await ctx.send("전적의 개수는 숫자로 입력해주세요!")
         return
-        
-    player_name, player_tag_num = player_info.split("#")
-    player_tag, num = player_tag_num.split()
-    
+   
     puuid = get_puuid(player_name, player_tag)
     if not puuid:
         await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
