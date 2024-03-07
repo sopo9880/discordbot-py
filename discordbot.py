@@ -300,6 +300,9 @@ async def 롤전적(ctx, player_info_num):
     player_tag, num = player_tag_num.split()
    
     puuid = get_puuid(player_name, player_tag)
+
+    await ctx.send(puuid)
+    
     if not puuid:
         await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
         return
