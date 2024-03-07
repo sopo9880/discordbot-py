@@ -145,6 +145,120 @@ async def 사용자지연시간(ctx):
 
 #=============================================================
 
+#!롤전적 명령어 구현
+@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
+async def 롤전적(ctx, player_info_num):
+
+    #사용자 입력을 합침
+    input_str = ' '.join(args)
+
+    # #으로 나눠서 플레이어 이름, 태그 및 반복 횟수 추출
+    player_name, player_tag_num = input_str.split('#')
+
+    # 공백으로 나눠서 플레이어 태그와 반복 횟수 추출
+    player_tag, num = player_tag_num.split()
+    
+    puuid = get_puuid(player_name, player_tag)
+    
+    if not puuid:
+        await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
+        return
+    
+    url = f'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={num}&api_key={riot_api_key}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        match_ids = response.json()
+	
+    else:
+        await ctx.send("전적 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
+        return
+
+    
+    for idx, match_id in enumerate(match_ids):
+        url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={riot_api_key}'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            info = data['info']
+            participants = info['participants']
+			
+            game_mode = get_game_mode(info['queueId'])
+            teamKills = 0
+            for participant in participants:
+                if participant['puuid'] == puuid:
+                    teamId = participant['teamId']
+                                
+                    for team in data['info']['teams']:
+                        if team['teamId'] == teamId:
+                            teamKills = team["objectives"]["champion"]["kills"]
+                    champ_name_e = participant['championName']
+                    champ_name_k = get_champion_name(champ_name_e.capitalize())
+                    game_duration = info['gameDuration']
+                    win = participant['win']
+                    kda = f"{participant['kills']} / {participant['deaths']} / {participant['assists']}"
+
+                    double_kill = participant['doubleKills']
+                    triple_kill = participant['tripleKills']
+                    quadra_kill = participant['quadraKills']
+                    penta_kill = participant['pentaKills']
+
+                    # match_info에서 챔피언 이미지를 받아옴
+                    champ_image_url = get_champion_image_url(champ_name_e.capitalize())
+
+                    # 이미지 파일 객체를 만듦
+                    response = requests.get(champ_image_url)
+                    #image_file = File(io.BytesIO(response.content), filename="champion.png")
+
+                    if participant['deaths'] == 0:
+                        kda_ratio = "Perfect"
+                    else:
+                        kda_ratio = round((participant['kills'] + participant['assists']) / participant['deaths'], 2)
+
+                    kill_involvement = (participant['kills'] + participant['assists'] ) / teamKills * 100
+
+                    cs = participant['totalMinionsKilled'] + participant['neutralMinionsKilled']
+                    cs_str = round(cs / (game_duration/60), 1)
+
+                    spells = [get_spell_name(participant['summoner1Id']), get_spell_name(participant['summoner2Id'])]
+
+                    '''primary_perk = get_rune_name(get_primary_perk(participant))
+                    sub_perk_style = get_rune_name(get_sub_perk_style(participant))'''
+
+                    primary_perk = get_primary_perk(participant)
+                    sub_perk_style = get_sub_perk_style(participant)
+
+                    '''try:
+                        tier = f"{data['tier']} {data['rank']}"
+                    except KeyError:
+                        tier = "Unranked"'''
+
+                    min = game_duration // 60
+                    sec = game_duration % 60
+
+                    time_ago = datetime.datetime.utcnow() - datetime.datetime.fromtimestamp(info['gameCreation']/1000.0)
+                    time_ago_str = get_time_ago_str(time_ago)
+                    
+                    match_info = (f"{game_mode} {'승리' if win else '패배'} {min}분 {sec}초 \n "
+                                f"{champ_name_k}  {kda} \t\t\t 평점 {kda_ratio}:1\n"
+                                f" \t\t\t 킬관여 {kill_involvement:,.1f}% CS{cs} ({cs_str})\n"
+                                f"더블킬:{double_kill} 트리플킬: {triple_kill} 쿼드라킬: {quadra_kill}, 펜타킬: {penta_kill}")
+                    
+                    embed = discord.Embed(title=f"{player_name}#{player_tag}님의 최근 {num}판 전적", color=random.randint(0, 0xffffff))
+                    embed.add_field(name=f"**Match {idx+1}**", value=match_info, inline=False)
+                    embed.set_thumbnail(url=champ_image_url)
+                    await ctx.send(embed=embed)
+                    break
+
+    '''if match_list:
+            
+    else:
+        await ctx.send("전적 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")'''
+
+
+
+#-------------롤 전적 관련 함수 모음
+
 #챔피언 이름 들고오는 함수
 def get_champion_name(champion_id):
     response = requests.get(f"http://ddragon.leagueoflegends.com/cdn/{get_version()}/data/ko_KR/champion.json")
@@ -286,127 +400,14 @@ def get_match_data(match_id):
     response = requests.get(url)
     return response.json()
 
-#!롤전적 명령어 구현
-@client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
-async def 롤전적(ctx, player_info_num):
-
-    #사용자 입력을 합침
-    input_str = ' '.join(args)
-
-    # #으로 나눠서 플레이어 이름, 태그 및 반복 횟수 추출
-    player_name, player_tag_num = input_str.split('#')
-
-    # 공백으로 나눠서 플레이어 태그와 반복 횟수 추출
-    player_tag, num = player_tag_num.split()
-    
-    await ctx.send(player_name, player_tag)
-    
-    puuid = get_puuid(player_name, player_tag)
-
-    await ctx.send(puuid)
-    
-    if not puuid:
-        await ctx.send("소환사 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
-        return
-    
-    url = f'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={num}&api_key={riot_api_key}'
-    response = requests.get(url)
-    if response.status_code == 200:
-        match_ids = response.json()
-    else:
-        await ctx.send("전적 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")
-        return
-
-    
-    for idx, match_id in enumerate(match_ids):
-        url = f'https://asia.api.riotgames.com/lol/match/v5/matches/{match_id}?api_key={riot_api_key}'
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            data = response.json()
-            info = data['info']
-            participants = info['participants']
-
-            game_mode = get_game_mode(info['queueId'])
-            teamKills = 0
-            for participant in participants:
-                if participant['puuid'] == puuid:
-                    teamId = participant['teamId']
-                                
-                    for team in data['info']['teams']:
-                        if team['teamId'] == teamId:
-                            teamKills = team["objectives"]["champion"]["kills"]
-                    champ_name_e = participant['championName']
-                    champ_name_k = get_champion_name(champ_name_e.capitalize())
-                    game_duration = info['gameDuration']
-                    win = participant['win']
-                    kda = f"{participant['kills']} / {participant['deaths']} / {participant['assists']}"
-
-                    double_kill = participant['doubleKills']
-                    triple_kill = participant['tripleKills']
-                    quadra_kill = participant['quadraKills']
-                    penta_kill = participant['pentaKills']
-
-                    # match_info에서 챔피언 이미지를 받아옴
-                    champ_image_url = get_champion_image_url(champ_name_e.capitalize())
-
-                    # 이미지 파일 객체를 만듦
-                    response = requests.get(champ_image_url)
-                    #image_file = File(io.BytesIO(response.content), filename="champion.png")
-
-                    if participant['deaths'] == 0:
-                        kda_ratio = "Perfect"
-                    else:
-                        kda_ratio = round((participant['kills'] + participant['assists']) / participant['deaths'], 2)
-
-                    kill_involvement = (participant['kills'] + participant['assists'] ) / teamKills * 100
-
-                    cs = participant['totalMinionsKilled'] + participant['neutralMinionsKilled']
-                    cs_str = round(cs / (game_duration/60), 1)
-
-                    spells = [get_spell_name(participant['summoner1Id']), get_spell_name(participant['summoner2Id'])]
-
-                    '''primary_perk = get_rune_name(get_primary_perk(participant))
-                    sub_perk_style = get_rune_name(get_sub_perk_style(participant))'''
-
-                    primary_perk = get_primary_perk(participant)
-                    sub_perk_style = get_sub_perk_style(participant)
-
-                    '''try:
-                        tier = f"{data['tier']} {data['rank']}"
-                    except KeyError:
-                        tier = "Unranked"'''
-
-                    min = game_duration // 60
-                    sec = game_duration % 60
-
-                    time_ago = datetime.datetime.utcnow() - datetime.datetime.fromtimestamp(info['gameCreation']/1000.0)
-                    time_ago_str = get_time_ago_str(time_ago)
-                    
-                    match_info = (f"{game_mode} {'승리' if win else '패배'} {min}분 {sec}초 \n "
-                                f"{champ_name_k}  {kda} \t\t\t 평점 {kda_ratio}:1\n"
-                                f" \t\t\t 킬관여 {kill_involvement:,.1f}% CS{cs} ({cs_str})\n"
-                                f"더블킬:{double_kill} 트리플킬: {triple_kill} 쿼드라킬: {quadra_kill}, 펜타킬: {penta_kill}")
-                    
-                    embed = discord.Embed(title=f"{player_name}#{player_tag}님의 최근 {num}판 전적", color=random.randint(0, 0xffffff))
-                    embed.add_field(name=f"**Match {idx+1}**", value=match_info, inline=False)
-                    embed.set_thumbnail(url=champ_image_url)
-                    await ctx.send(embed=embed)
-                    break
-
-    '''if match_list:
-            
-    else:
-        await ctx.send("전적 정보를 가져올 수 없습니다. op.gg를 이용해주세요.")'''
-        
-
 #버전 정보 
 def get_version():
     response = requests.get("https://ddragon.leagueoflegends.com/api/versions.json")
     if response.status_code == 200:
         versions = response.json()
         return versions[0]
-    
+
+
 #=============================================================
 
 @client.event
