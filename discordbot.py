@@ -289,16 +289,15 @@ def get_match_data(match_id):
 #!롤전적 명령어 구현
 @client.command(name="롤전적", aliases=['lol_Re'], help='사용법 *롤전적 [소환사명] [태그] [갯수] ')
 async def 롤전적(ctx, player_info_num):
-    # 사용자 입력을 공백을 기준으로 분리
-    input_parts = " ".join(args).split()
 
-    # 플레이어 이름과 태그 추출
-    player_name_tag = input_parts[0].split("#")
-    player_name = " ".join(player_name_tag[:-1])  # 빈칸으로 구분된 플레이어 이름
-    player_tag = player_name_tag[-1]  # 태그
+    #사용자 입력을 합침
+    input_str = ' '.join(args)
 
-    # 반복 횟수 추출
-    num = int(input_parts[-1])
+    # #으로 나눠서 플레이어 이름, 태그 및 반복 횟수 추출
+    player_name, player_tag_num = input_str.split('#')
+
+    # 공백으로 나눠서 플레이어 태그와 반복 횟수 추출
+    player_tag, num = player_tag_num.split()
    
     puuid = get_puuid(player_name, player_tag)
     if not puuid:
