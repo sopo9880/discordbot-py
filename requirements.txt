@@ -10,5 +10,6 @@ typing_extensions==4.3.0
 yarl==1.7.2
 openai==0.27.2
 bs4
+yt_dlp
 beautifulsoup4
 requests
