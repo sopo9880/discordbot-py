@@ -43,7 +43,7 @@ async def ask_gpt(ctx, *, question):
     answer = result['choices'][0]['message']['content']
     #await ctx.channel.fetch_message(message_id).delete()
 	
-        await ctx.send("23.08.03부 서비스 종료했습니다.")
+        #await ctx.send("23.08.03부 서비스 종료했습니다.")
     #await ctx.send(f"{ctx.author.mention}님, 제가 생각하는 답변은 다음과 같습니다.\n {answer}")
 #=============================================================
 
